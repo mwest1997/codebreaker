@@ -8,23 +8,24 @@ import java.util.Random;
 
 public class Game {
 
-  private static final String BAD_GUESS_PATTERN_FORMAT = "^.*[^%s].*$";
+  private static final String GOOD_CHARACTER_PATTERN_FORMAT = "[%s]";
   private static final String ILLEGAL_LENGTH_MESSAGE =
-      "Invalid guess length: required=%d; provided=%d";
+      "Invalid guess length: code length is %d; guess length is %d.";
   private static final String ILLEGAL_CHARACTER_MESSAGE =
-      "Guess includes invalid characters: required=%s; provided=%s.";
+      "Guess includes invalid characters: pool is \"%s\"; guess included=\"%s\".";
+
   private final Code code;
   private final List<Guess> guesses;
   private final String pool;
   private final int length;
-  private final String badGuessPattern;
+  private final String goodCharacterPattern;
 
   public Game(String pool, int length, Random rng) {
     code = new Code(pool, length, rng);
     guesses = new LinkedList<>();
     this.pool = pool;
     this.length = length;
-    badGuessPattern = String.format(BAD_GUESS_PATTERN_FORMAT, pool);
+    goodCharacterPattern = String.format(GOOD_CHARACTER_PATTERN_FORMAT, pool);
   }
 
   public Code getCode() {
@@ -47,18 +48,24 @@ public class Game {
     return guesses.size();
   }
 
-  public Guess guess(String text) {
+  public Guess guess(String text)
+      throws IllegalGuessLengthException, IllegalGuessCharacterException{
     if (text.length() != length) {
-      throw new IllegalArgumentException(String.format(
-          ILLEGAL_LENGTH_MESSAGE,length, text.length()));
+      throw new IllegalGuessLengthException(
+          String.format(ILLEGAL_LENGTH_MESSAGE, length, text.length()));
     }
-    if (text.matches(badGuessPattern)) {
-      throw new IllegalArgumentException(String.format(
-          ILLEGAL_CHARACTER_MESSAGE, pool, text));
+    String badCharacters = text.replaceAll(goodCharacterPattern, "");
+    if (!badCharacters.isEmpty()) {
+      throw new IllegalGuessCharacterException(
+          String.format(ILLEGAL_CHARACTER_MESSAGE, pool, badCharacters));
     }
     Guess guess = code.new Guess(text);
     guesses.add(guess);
     return guess;
+  }
+
+  public void restart() {
+    guesses.clear();
   }
 
 }
