@@ -6,6 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Implements the parameters of the game. For example: How long guesses can be, illegal characters
+ * as well as illegal lengths. This class gets the code from the user and relays it over to the app.
+ */
 public class Game {
 
   private static final String GOOD_CHARACTER_PATTERN_FORMAT = "[%s]";
@@ -20,6 +24,12 @@ public class Game {
   private final int length;
   private final String goodCharacterPattern;
 
+  /**
+   * This method sets up the game for the user, it establishes a new code each time.
+   * @param pool characters allowed in the code.
+   * @param length length of code allowed.
+   * @param rng randomizes the code given to you.
+   */
   public Game(String pool, int length, Random rng) {
     code = new Code(pool, length, rng);
     guesses = new LinkedList<>();
@@ -48,6 +58,10 @@ public class Game {
     return guesses.size();
   }
 
+  /**
+   * This method gets the guess from the user and brings it into the app for processing to see if it
+   * is right.
+   */
   public Guess guess(String text)
       throws IllegalGuessLengthException, IllegalGuessCharacterException{
     if (text.length() != length) {

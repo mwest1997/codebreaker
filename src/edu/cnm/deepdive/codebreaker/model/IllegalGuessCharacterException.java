@@ -1,5 +1,8 @@
 package edu.cnm.deepdive.codebreaker.model;
 
+/**
+ * This class does not let the user type in an illegal character to prevent the app from crashing.
+ */
 public class IllegalGuessCharacterException extends IllegalArgumentException {
 
   public IllegalGuessCharacterException() {
